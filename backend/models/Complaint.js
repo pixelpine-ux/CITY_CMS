@@ -63,6 +63,13 @@ const complaintSchema = new mongoose.Schema({
   timestamps: true
 });
 
+// Add indexes for better query performance
+complaintSchema.index({ citizen: 1, createdAt: -1 });
+complaintSchema.index({ status: 1 });
+complaintSchema.index({ assignedTo: 1 });
+complaintSchema.index({ category: 1 });
+complaintSchema.index({ createdAt: -1 });
+
 // Add initial status to history when complaint is created
 complaintSchema.pre('save', function(next) {
   if (this.isNew) {

@@ -13,12 +13,13 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Email is required'],
     unique: true,
     lowercase: true,
-    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
   },
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: [6, 'Password must be at least 6 characters']
+    minlength: [8, 'Password must be at least 8 characters']
   },
   role: {
     type: String,
@@ -28,6 +29,10 @@ const userSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Add indexes for better query performance
+userSchema.index({ role: 1 });
+userSchema.index({ email: 1 }); // Already unique, but explicit index
 
 // Hash password before saving
 userSchema.pre('save', async function(next) {
