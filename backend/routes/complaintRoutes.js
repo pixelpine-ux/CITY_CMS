@@ -7,7 +7,7 @@ const {
   assignComplaint
 } = require('../controllers/complaintController');
 const { authenticate, authorize } = require('../middlewares/auth');
-const { validateComplaint, validateStatusUpdate } = require('../middlewares/validation');
+const { validateComplaint, validateStatusUpdate, validateAssignment } = require('../middlewares/validation');
 
 const router = express.Router();
 
@@ -24,6 +24,6 @@ router.get('/:id', authenticate, getComplaint);
 router.put('/:id/status', authenticate, authorize('staff', 'admin'), validateStatusUpdate, updateStatus);
 
 // PUT /api/complaints/:id/assign - Assign to staff (admin only)
-router.put('/:id/assign', authenticate, authorize('admin'), assignComplaint);
+router.put('/:id/assign', authenticate, authorize('admin'), validateAssignment, assignComplaint);
 
 module.exports = router;

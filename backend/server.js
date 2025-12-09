@@ -8,6 +8,21 @@ require('dotenv').config();
 
 const app = express();
 
+// Validate required environment variables
+const requiredEnvVars = ['MONGODB_URI', 'JWT_SECRET'];
+requiredEnvVars.forEach((varName) => {
+  if (!process.env[varName]) {
+    console.error(`❌ Missing required environment variable: ${varName}`);
+    process.exit(1);
+  }
+});
+
+// Validate JWT secret strength
+if (process.env.JWT_SECRET.length < 32) {
+  console.error('❌ JWT_SECRET must be at least 32 characters for security');
+  process.exit(1);
+}
+
 // Security Middleware
 app.use(helmet());
 app.use(mongoSanitize());
@@ -23,15 +38,24 @@ app.use('/api/', limiter);
 // Auth rate limiting (stricter)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
-  message: { message: 'Too many authentication attempts, please try again later.' }
+  max: 10, // Increased from 5 to 10 for better UX
+  message: { message: 'Too many login attempts. Please try again in 15 minutes.' }
 });
 app.use('/api/auth', authLimiter);
 
 // Basic Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Request logging
+app.use((req, res, next) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI, {

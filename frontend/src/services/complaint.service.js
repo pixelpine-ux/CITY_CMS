@@ -3,23 +3,27 @@ import AuthService from './auth.service';
 
 const ComplaintService = {
   createComplaint: async (complaintData) => {
-    const token = AuthService.getToken();
-    const response = await api.post('/complaints', complaintData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await api.post('/complaints', complaintData);
     return response.data;
   },
 
   getComplaints: async () => {
-    const token = AuthService.getToken();
-    const response = await api.get('/complaints', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await api.get('/complaints');
+    return response.data;
+  },
+
+  getComplaintById: async (id) => {
+    const response = await api.get(`/complaints/${id}`);
+    return response.data;
+  },
+
+  updateComplaintStatus: async (id, statusData) => {
+    const response = await api.put(`/complaints/${id}/status`, statusData);
+    return response.data;
+  },
+
+  assignComplaint: async (id, staffId) => {
+    const response = await api.put(`/complaints/${id}/assign`, { staffId });
     return response.data;
   },
 };

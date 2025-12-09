@@ -6,7 +6,7 @@ const handleValidationErrors = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       message: 'Validation failed',
-      errors: errors.array()
+      errors: errors.array().map(e => ({ field: e.path, message: e.msg }))
     });
   }
   next();
@@ -23,8 +23,10 @@ const validateRegister = [
     .normalizeEmail()
     .withMessage('Please provide a valid email'),
   body('password')
-    .isLength({ min: 6 })
-    .withMessage('Password must be at least 6 characters long'),
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters')
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+    .withMessage('Password must contain uppercase, lowercase, and number'),
   body('role')
     .optional()
     .isIn(['citizen', 'staff', 'admin'])
@@ -81,9 +83,18 @@ const validateStatusUpdate = [
   handleValidationErrors
 ];
 
+// Staff assignment validation
+const validateAssignment = [
+  body('staffId')
+    .isMongoId()
+    .withMessage('Invalid staff ID'),
+  handleValidationErrors
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
   validateComplaint,
-  validateStatusUpdate
+  validateStatusUpdate,
+  validateAssignment
 };
