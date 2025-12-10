@@ -1,8 +1,18 @@
 {
-  "name": "frontend",
+  "name": "city-cms-frontend",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "React frontend for City Complaint Management System",
   "type": "module",
+  "keywords": [
+    "react",
+    "vite",
+    "complaint-management",
+    "frontend",
+    "spa"
+  ],
+  "author": "City CMS Team",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -24,5 +34,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "vite": "^4.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
   }
 }
