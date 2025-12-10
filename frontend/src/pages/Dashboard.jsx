@@ -72,10 +72,17 @@ const Dashboard = () => {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--spacing-6)' }}>
             <a href="/complaints/new" className="city-card" style={{ 
               textDecoration: 'none', 
-              background: 'var(--color-primary)',
+              background: 'linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)',
               color: 'white',
               textAlign: 'center',
-              transition: 'all 0.2s ease'
+              transition: 'all 0.3s ease',
+              cursor: 'pointer'
+            }} onMouseEnter={(e) => {
+              e.target.style.transform = 'translateY(-5px) scale(1.02)';
+              e.target.style.boxShadow = '0 15px 35px rgba(37, 99, 235, 0.4)';
+            }} onMouseLeave={(e) => {
+              e.target.style.transform = 'translateY(0) scale(1)';
+              e.target.style.boxShadow = 'var(--shadow-md)';
             }}>
               <div className="city-icon" style={{ 
                 fontSize: '2rem', 
