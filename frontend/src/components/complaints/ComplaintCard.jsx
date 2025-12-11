@@ -4,9 +4,18 @@ const ComplaintCard = ({ complaint }) => {
   const getStatusClass = (status) => {
     switch (status?.toLowerCase()) {
       case 'pending': return 'status-pending';
-      case 'in-progress': return 'status-in-progress';
+      case 'in_progress': return 'status-in-progress';
       case 'resolved': return 'status-resolved';
       default: return 'status-pending';
+    }
+  };
+  
+  const getStatusDisplay = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'pending': return 'Pending';
+      case 'in_progress': return 'In Progress';
+      case 'resolved': return 'Resolved';
+      default: return 'Pending';
     }
   };
 
@@ -15,7 +24,7 @@ const ComplaintCard = ({ complaint }) => {
       <div className="card-body">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--spacing-4)' }}>
           <h3 style={{ margin: 0, color: 'var(--color-gray-900)', fontSize: 'var(--font-size-lg)' }}>{complaint.title}</h3>
-          <span className={getStatusClass(complaint.status)}>{complaint.status}</span>
+          <span className={getStatusClass(complaint.status)}>{getStatusDisplay(complaint.status)}</span>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 'var(--spacing-3)', marginBottom: 'var(--spacing-4)' }}>

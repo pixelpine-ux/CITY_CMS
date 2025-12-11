@@ -1,12 +1,49 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useComplaints } from '../contexts/ComplaintContext';
 import StatsCard from '../components/ui/StatsCard';
+import ComplaintList from '../components/complaints/ComplaintList';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { complaints, loading, fetchComplaints } = useComplaints();
+  const [showResetWarning, setShowResetWarning] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  
+  // Calculate stats from real data
+  const totalComplaints = complaints?.length || 0;
+  const pendingComplaints = complaints?.filter(c => c.status === 'pending')?.length || 0;
+  const resolvedComplaints = complaints?.filter(c => c.status === 'resolved')?.length || 0;
+  const inProgressComplaints = complaints?.filter(c => c.status === 'in_progress')?.length || 0;
 
   const handleLogout = () => {
     logout();
+  };
+  
+  const handleResetData = async () => {
+    setResetting(true);
+    try {
+      // Clear local storage
+      const keysToKeep = ['token', 'user'];
+      const allKeys = Object.keys(localStorage);
+      allKeys.forEach(key => {
+        if (!keysToKeep.includes(key)) {
+          localStorage.removeItem(key);
+        }
+      });
+      
+      // Refresh complaints data
+      await fetchComplaints();
+      
+      setShowResetWarning(false);
+      alert('✅ Data reset successfully! The page will refresh.');
+      window.location.reload();
+    } catch (error) {
+      console.error('Reset failed:', error);
+      alert('❌ Reset failed. Please try again.');
+    } finally {
+      setResetting(false);
+    }
   };
 
   return (
@@ -42,25 +79,25 @@ const Dashboard = () => {
         <div className="stats-grid">
           <StatsCard 
             icon="📊" 
-            number="0" 
+            number={loading ? '...' : totalComplaints.toString()} 
             label="Total Complaints" 
             color="primary"
           />
           <StatsCard 
             icon="⏳" 
-            number="0" 
+            number={loading ? '...' : pendingComplaints.toString()} 
             label="Pending Review" 
             color="warning"
           />
           <StatsCard 
             icon="✅" 
-            number="0" 
+            number={loading ? '...' : resolvedComplaints.toString()} 
             label="Resolved" 
             color="success"
           />
           <StatsCard 
             icon="🚀" 
-            number="0" 
+            number={loading ? '...' : inProgressComplaints.toString()} 
             label="In Progress" 
             color="primary"
           />
@@ -119,9 +156,23 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Account Info */}
+        {/* Account Info & Reset Data */}
         <div className="city-card" style={{ marginTop: 'var(--spacing-8)' }}>
-          <h3 style={{ marginBottom: 'var(--spacing-4)', color: 'var(--color-gray-800)' }}>Account Information</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--spacing-4)' }}>
+            <h3 style={{ margin: 0, color: 'var(--color-gray-800)' }}>Account Information</h3>
+            <button 
+              onClick={() => setShowResetWarning(true)}
+              className="btn"
+              style={{ 
+                background: 'var(--color-error)', 
+                color: 'white',
+                fontSize: '0.875rem',
+                padding: 'var(--spacing-2) var(--spacing-3)'
+              }}
+            >
+              🗑️ Reset Data
+            </button>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--spacing-4)' }}>
             <div>
               <strong className="text-gray">Role:</strong>
@@ -139,6 +190,77 @@ const Dashboard = () => {
               <p style={{ margin: 'var(--spacing-1) 0 0 0' }}>{user?.email}</p>
             </div>
           </div>
+        </div>
+        
+        {/* Reset Warning Modal */}
+        {showResetWarning && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1000
+          }}>
+            <div className="city-card" style={{
+              maxWidth: '400px',
+              margin: 'var(--spacing-4)',
+              background: 'white',
+              border: '2px solid var(--color-error)'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-6)' }}>
+                <div style={{ fontSize: '3rem', marginBottom: 'var(--spacing-4)' }}>⚠️</div>
+                <h3 style={{ color: 'var(--color-error)', marginBottom: 'var(--spacing-2)' }}>Reset All Data</h3>
+                <p style={{ color: 'var(--color-gray-600)', margin: 0 }}>
+                  This will clear all cached data and refresh from the server. 
+                  <strong>This action cannot be undone.</strong>
+                </p>
+              </div>
+              <div style={{ display: 'flex', gap: 'var(--spacing-3)' }}>
+                <button 
+                  onClick={() => setShowResetWarning(false)}
+                  className="btn"
+                  style={{ flex: 1, background: 'var(--color-gray-200)', color: 'var(--color-gray-700)' }}
+                  disabled={resetting}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleResetData}
+                  className="btn"
+                  style={{ flex: 1, background: 'var(--color-error)', color: 'white' }}
+                  disabled={resetting}
+                >
+                  {resetting ? 'Resetting...' : 'Reset Data'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Recent Complaints */}
+        <div style={{ marginTop: 'var(--spacing-8)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-4)' }}>
+            <h2 style={{ margin: 0, color: 'var(--color-gray-800)' }}>My Complaints</h2>
+            <button 
+              onClick={fetchComplaints}
+              className="btn"
+              style={{ 
+                background: 'var(--color-primary)', 
+                color: 'white',
+                fontSize: '0.875rem',
+                padding: 'var(--spacing-2) var(--spacing-4)'
+              }}
+              disabled={loading}
+            >
+              {loading ? '🔄 Refreshing...' : '🔄 Refresh'}
+            </button>
+          </div>
+          <ComplaintList />
         </div>
       </main>
     </div>

@@ -55,7 +55,7 @@ const validateComplaint = [
     .isLength({ min: 10, max: 1000 })
     .withMessage('Description must be between 10 and 1000 characters'),
   body('category')
-    .isIn(['roads', 'water', 'electricity', 'waste', 'noise', 'other'])
+    .isIn(['Roads & Infrastructure', 'Water & Utilities', 'Electricity', 'Waste Management', 'Noise Complaints', 'Other'])
     .withMessage('Invalid category'),
   body('location')
     .trim()
@@ -63,8 +63,8 @@ const validateComplaint = [
     .withMessage('Location must be between 5 and 200 characters'),
   body('priority')
     .optional()
-    .isIn(['low', 'medium', 'high'])
-    .withMessage('Priority must be low, medium, or high'),
+    .isIn(['Low', 'Medium', 'High'])
+    .withMessage('Priority must be Low, Medium, or High'),
   handleValidationErrors
 ];
 

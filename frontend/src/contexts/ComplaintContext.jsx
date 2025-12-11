@@ -26,11 +26,14 @@ export const ComplaintProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await ComplaintService.getComplaints();
-      setComplaints(data);
+      const response = await ComplaintService.getComplaints();
+      // Handle API response structure
+      const complaintsData = response.complaints || response.data || response || [];
+      setComplaints(complaintsData);
     } catch (err) {
       setError('Failed to fetch complaints.');
       console.error('Failed to fetch complaints:', err);
+      setComplaints([]);
     } finally {
       setLoading(false);
     }
@@ -43,7 +46,9 @@ export const ComplaintProvider = ({ children }) => {
     setLoading(true);
     setError(null);
     try {
-        const newComplaint = await ComplaintService.createComplaint(complaintData);
+        const response = await ComplaintService.createComplaint(complaintData);
+        // Handle API response structure
+        const newComplaint = response.complaint || response.data || response;
         setComplaints((prev) => [newComplaint, ...prev]);
         return newComplaint;
     } catch (err) {

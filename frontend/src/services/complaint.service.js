@@ -3,7 +3,19 @@ import AuthService from './auth.service';
 
 const ComplaintService = {
   createComplaint: async (complaintData) => {
-    const response = await api.post('/complaints', complaintData);
+    // Convert FormData to regular object for now (file uploads can be added later)
+    let data = complaintData;
+    if (complaintData instanceof FormData) {
+      data = {
+        title: complaintData.get('title'),
+        category: complaintData.get('category'),
+        location: complaintData.get('location'),
+        priority: complaintData.get('priority'),
+        description: complaintData.get('description')
+      };
+    }
+    
+    const response = await api.post('/complaints', data);
     return response.data;
   },
 

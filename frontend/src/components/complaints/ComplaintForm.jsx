@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ComplaintService from '../../services/complaint.service';
+import { useComplaints } from '../../contexts/ComplaintContext';
 
 const ComplaintForm = () => {
   const [title, setTitle] = useState('');
@@ -12,6 +12,7 @@ const ComplaintForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { createComplaint, fetchComplaints } = useComplaints();
 
   const getFormProgress = () => {
     const fields = [title, category, location, description];
@@ -36,8 +37,10 @@ const ComplaintForm = () => {
 
     try {
       console.log('Submitting complaint:', { title, category, location, priority });
-      await ComplaintService.createComplaint(formData);
+      await createComplaint(formData);
       console.log('Complaint submitted successfully');
+      // Refresh complaints data
+      await fetchComplaints();
       navigate('/');
     } catch (err) {
       console.error('Complaint submission error:', err);
