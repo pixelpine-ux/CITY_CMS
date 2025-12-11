@@ -15,7 +15,7 @@ const complaintSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Category is required'],
-    enum: ['roads', 'water', 'electricity', 'waste', 'noise', 'other']
+    enum: ['Roads & Infrastructure', 'Water & Utilities', 'Electricity', 'Waste Management', 'Noise Complaints', 'Other']
   },
   location: {
     type: String,
@@ -29,8 +29,8 @@ const complaintSchema = new mongoose.Schema({
   },
   priority: {
     type: String,
-    enum: ['low', 'medium', 'high'],
-    default: 'medium'
+    enum: ['Low', 'Medium', 'High'],
+    default: 'Medium'
   },
   citizen: {
     type: mongoose.Schema.Types.ObjectId,
