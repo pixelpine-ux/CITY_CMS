@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import NewComplaint from './pages/NewComplaint';
 import ComplaintDetail from './pages/ComplaintDetail';
+import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import './App.css';
 
@@ -34,6 +35,14 @@ function App() {
           element={
             <ProtectedRoute>
               <ComplaintDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute>
+              <AdminPanel />
             </ProtectedRoute>
           }
         />

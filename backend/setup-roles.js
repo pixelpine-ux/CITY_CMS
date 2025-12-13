@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 
-const User = require('./models/User');
+const User = require('./backend/models/User');
 
 async function setupRoles() {
   try {
@@ -21,8 +21,6 @@ async function setupRoles() {
         role: 'admin'
       });
       console.log('✅ Admin user created: admin@city.gov / admin123');
-    } else {
-      console.log('✅ Admin user already exists');
     }
 
     // Create staff user
@@ -35,8 +33,6 @@ async function setupRoles() {
         role: 'staff'
       });
       console.log('✅ Staff user created: staff@city.gov / staff123');
-    } else {
-      console.log('✅ Staff user already exists');
     }
 
     console.log('\n🎯 Test Accounts:');

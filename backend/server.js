@@ -88,10 +88,12 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
+const roleRoutes = require('./routes/roleRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/complaints', complaintRoutes);
+app.use('/api/roles', roleRoutes);
 
 // Error handling middleware (must be last)
 const errorHandler = require('./middlewares/errorHandler');

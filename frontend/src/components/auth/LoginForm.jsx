@@ -11,11 +11,6 @@ const LoginForm = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const quickLogins = {
-    admin: { email: 'admin@city.gov', password: 'admin123' },
-    staff: { email: 'staff@city.gov', password: 'staff123' }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -31,31 +26,6 @@ const LoginForm = () => {
       // Clear password on error for security
       setPassword('');
     }
-  };
-
-  const handleQuickLogin = async (role) => {
-    setError('');
-    const credentials = quickLogins[role];
-    
-    try {
-      await login(credentials);
-      // Clear form on success
-      setEmail('');
-      setPassword('');
-      navigate('/');
-    } catch (err) {
-      console.error('Quick login error:', err);
-      setError(err.response?.data?.message || 'Quick login failed. Please try again.');
-      // Clear form on error
-      setEmail('');
-      setPassword('');
-    }
-  };
-
-  const fillCredentials = (role) => {
-    const credentials = quickLogins[role];
-    setEmail(credentials.email);
-    setPassword(credentials.password);
   };
 
   return (
@@ -88,45 +58,6 @@ const LoginForm = () => {
 
       <div className="card-body">
         {error && <div className="error">{error}</div>}
-        
-        {activeTab === 'admin' && (
-          <div className="quick-access">
-            <p className="quick-access-title">Quick Access (Demo)</p>
-            <div className="quick-buttons">
-              <button 
-                type="button" 
-                className="btn-quick admin"
-                onClick={() => handleQuickLogin('admin')}
-              >
-                👨‍💼 Login as Admin
-              </button>
-              <button 
-                type="button" 
-                className="btn-quick staff"
-                onClick={() => handleQuickLogin('staff')}
-              >
-                👩‍💻 Login as Staff
-              </button>
-            </div>
-            <div className="divider">or enter credentials manually</div>
-            <div className="demo-credentials">
-              <button 
-                type="button" 
-                className="credential-fill"
-                onClick={() => fillCredentials('admin')}
-              >
-                Fill Admin Credentials
-              </button>
-              <button 
-                type="button" 
-                className="credential-fill"
-                onClick={() => fillCredentials('staff')}
-              >
-                Fill Staff Credentials
-              </button>
-            </div>
-          </div>
-        )}
         
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -162,7 +93,7 @@ const LoginForm = () => {
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
+                {showPassword ? '👁️' : '👁️🗨️'}
               </button>
             </div>
           </div>

@@ -7,6 +7,34 @@
 
 A professional full-stack MERN application implementing enterprise-grade complaint management with comprehensive role-based access control and security features.
 
+## 🔄 Getting Started for Group Members
+
+### 1. Fork & Clone the Repository
+
+**Step 1: Fork the Repository**
+1. Go to the GitHub repository page
+2. Click the "Fork" button in the top-right corner
+3. Select your GitHub account to create a fork
+
+**Step 2: Clone Your Fork**
+```bash
+# Clone your forked repository
+git clone https://github.com/YOUR_USERNAME/CITY_CMS.git
+cd CITY_CMS
+
+# Add the original repository as upstream (for syncing)
+git remote add upstream https://github.com/ORIGINAL_OWNER/CITY_CMS.git
+```
+
+**Step 3: Keep Your Fork Updated**
+```bash
+# Fetch latest changes from original repository
+git fetch upstream
+git checkout main
+git merge upstream/main
+git push origin main
+```
+
 ## 🚀 Features
 
 ### Core Functionality
@@ -56,46 +84,132 @@ A professional full-stack MERN application implementing enterprise-grade complai
 - `PUT /api/complaints/:id/status` - Update status (staff/admin)
 - `PUT /api/complaints/:id/assign` - Assign to staff (admin)
 
-## 🚀 Quick Start
+## 🚀 Complete Setup Guide
 
 ### Prerequisites
-- Node.js 18+ and npm
-- MongoDB 6+ (local or cloud)
-- Git
+- **Node.js 18+** and npm ([Download here](https://nodejs.org/))
+- **MongoDB 6+** (see database setup below)
+- **Git** ([Download here](https://git-scm.com/))
 
-### Installation
+### 2. Database Setup (CRITICAL STEP)
 
-1. **Clone and Setup**
-   ```bash
-   git clone <repository-url>
-   cd city-cms
-   ```
+**Option A: Local MongoDB Installation**
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install -y mongodb
+sudo systemctl start mongodb
+sudo systemctl enable mongodb
 
-2. **Backend Setup**
-   ```bash
-   cd backend
-   npm install
-   cp .env.example .env
-   # Configure your .env file
-   npm run dev
-   ```
+# macOS (using Homebrew)
+brew tap mongodb/brew
+brew install mongodb-community
+brew services start mongodb/brew/mongodb-community
 
-3. **Frontend Setup** (in new terminal)
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-4. **Access Application**
-   - Backend API: http://localhost:5000
-   - Frontend: http://localhost:5173
-
-## Environment Variables
-
+# Windows: Download from https://www.mongodb.com/try/download/community
 ```
+
+**Option B: MongoDB Docker (Recommended for Groups)**
+```bash
+# Pull and run MongoDB container
+docker run -d --name city-cms-mongo -p 27017:27017 mongo:6
+
+# Or use the provided script
+chmod +x docs/deployment/START_MONGODB_DOCKER.sh
+./docs/deployment/START_MONGODB_DOCKER.sh
+```
+
+**Option C: MongoDB Atlas (Cloud - Free Tier)**
+1. Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create free account and cluster
+3. Get connection string (replace `<password>` with your password)
+4. Use this URI in your `.env` file
+
+### 3. Project Installation
+
+**Step 1: Install Dependencies**
+```bash
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies (in new terminal)
+cd frontend
+npm install
+```
+
+**Step 2: Configure Environment Variables**
+```bash
+# In backend directory
+cp .env.example .env
+```
+
+**Edit `backend/.env` file:**
+```env
 PORT=5000
+# For local MongoDB:
 MONGODB_URI=mongodb://localhost:27017/city_cms
+# For MongoDB Atlas (replace with your connection string):
+# MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/city_cms
+JWT_SECRET=your_super_secure_jwt_secret_key_min_32_chars_2024
+JWT_EXPIRE=7d
+NODE_ENV=development
+```
+
+**Step 3: Initialize Database & Create Admin Users**
+```bash
+# In backend directory
+node setup-roles.js
+```
+
+**Step 4: Start the Application**
+```bash
+# Terminal 1: Start Backend (in backend directory)
+npm run dev
+
+# Terminal 2: Start Frontend (in frontend directory)
+npm run dev
+```
+
+### 4. Access the Application
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5000
+
+### 5. Test Login Credentials
+- **Admin**: admin@city.gov / admin123
+- **Staff**: staff@city.gov / staff123
+- **Citizen**: Register new account or use any registered user
+
+## 🔧 Troubleshooting Common Issues
+
+### Database Connection Issues
+```bash
+# Check if MongoDB is running
+# For local installation:
+sudo systemctl status mongodb  # Linux
+brew services list | grep mongodb  # macOS
+
+# For Docker:
+docker ps | grep mongo
+
+# Test database connection:
+node -e "const mongoose = require('mongoose'); mongoose.connect('mongodb://localhost:27017/city_cms').then(() => console.log('✅ Connected')).catch(err => console.log('❌ Error:', err.message))"
+```
+
+### Port Already in Use
+```bash
+# Kill process using port 5000 or 5173
+sudo lsof -ti:5000 | xargs kill -9
+sudo lsof -ti:5173 | xargs kill -9
+```
+
+### Environment Variables
+**Required `.env` configuration:**
+```env
+PORT=5000
+# Choose ONE of these MongoDB options:
+MONGODB_URI=mongodb://localhost:27017/city_cms          # Local
+# MONGODB_URI=mongodb+srv://user:pass@cluster.net/city_cms  # Atlas
 JWT_SECRET=your_super_secure_jwt_secret_key_min_32_chars_2024
 JWT_EXPIRE=7d
 NODE_ENV=development
@@ -193,14 +307,55 @@ city-cms/
 
 ## 📝 Documentation
 
-For detailed development documentation, see the `docs/` directory (available locally):
-- Architecture diagrams and design decisions
-- Development setup and troubleshooting guides
-- Testing procedures and deployment instructions
+For detailed development documentation, see the `docs/` directory:
+- **Architecture**: System design and patterns
+- **Development**: Setup guides and best practices  
+- **Testing**: API testing and validation procedures
+- **Troubleshooting**: Common issues and solutions
+- **Deployment**: Production deployment guides
 
-## 🤝 Contributing
+## 🤝 Group Collaboration Workflow
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and coding standards.
+### Branch Strategy
+```bash
+# Create feature branch
+git checkout -b feature/your-feature-name
+
+# Make changes and commit
+git add .
+git commit -m "Add: your feature description"
+
+# Push to your fork
+git push origin feature/your-feature-name
+
+# Create Pull Request on GitHub
+```
+
+### Code Review Process
+1. Create Pull Request with clear description
+2. Request review from team members
+3. Address feedback and update code
+4. Merge after approval
+
+## 🆘 Getting Help
+
+### Quick Help Commands
+```bash
+# Check if everything is installed correctly
+node --version    # Should be 18+
+npm --version     # Should be 9+
+mongo --version   # Should be 6+ (if local install)
+
+# Test API endpoints
+cd docs/testing
+./test-api.sh
+```
+
+### Common Issues & Solutions
+- **MongoDB not connecting**: Check `docs/troubleshooting/TROUBLESHOOTING_GUIDE.md`
+- **Port conflicts**: See troubleshooting section above
+- **Environment setup**: Review `docs/development/START_HERE.md`
+- **API testing**: Use `docs/testing/TESTING_GUIDE.md`
 
 ## 📋 License
 
@@ -208,4 +363,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-For questions and support, please refer to the documentation in the `docs/` directory or create an issue in the repository.# Updated
+For questions and support:
+1. Check the `docs/` directory for detailed guides
+2. Create an issue in the repository
+3. Contact team members for group project help
+
+---
+**🎯 Quick Start Checklist for New Team Members:**
+- [ ] Fork and clone repository
+- [ ] Install Node.js 18+
+- [ ] Setup MongoDB (local/Docker/Atlas)
+- [ ] Install dependencies (`npm install` in both directories)
+- [ ] Configure `.env` file
+- [ ] Run `node setup-roles.js` in backend
+- [ ] Start backend (`npm run dev`)
+- [ ] Start frontend (`npm run dev`)
+- [ ] Test login with admin@city.gov / admin123
