@@ -38,11 +38,15 @@ const RegisterForm = () => {
     try {
       console.log('Attempting registration with:', { name: formData.name, email: formData.email });
       await register(formData.name, formData.email, formData.password);
+      // Clear form on success
+      setFormData({ name: '', email: '', password: '', confirmPassword: '' });
       navigate('/');
     } catch (err) {
       console.error('Registration error:', err);
       const errorMessage = err.response?.data?.message || err.message || 'Registration failed. Please check if the backend server is running.';
       setError(errorMessage);
+      // Clear passwords on error for security
+      setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
     } finally {
       setLoading(false);
     }

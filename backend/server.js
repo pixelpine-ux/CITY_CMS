@@ -62,7 +62,18 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB connected successfully'))
+  .then(async () => {
+    console.log('MongoDB connected successfully');
+    
+    // Initialize default roles
+    try {
+      const RoleService = require('./services/roleService');
+      await RoleService.initializeDefaultRoles();
+      console.log('✅ Default roles initialized');
+    } catch (error) {
+      console.error('❌ Error initializing roles:', error);
+    }
+  })
   .catch(err => {
     console.error('MongoDB connection error:', err);
     process.exit(1);

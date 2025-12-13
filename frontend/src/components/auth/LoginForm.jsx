@@ -21,29 +21,35 @@ const LoginForm = () => {
     setError('');
     try {
       await login({ email, password });
+      // Clear form on success
+      setEmail('');
+      setPassword('');
       navigate('/');
     } catch (err) {
       console.error('Login error:', err);
       setError(err.response?.data?.message || 'Login failed. Please try again.');
+      // Clear password on error for security
+      setPassword('');
     }
   };
 
   const handleQuickLogin = async (role) => {
     setError('');
     const credentials = quickLogins[role];
-    setEmail(credentials.email);
-    setPassword(credentials.password);
     
-    // Small delay to ensure state is updated
-    setTimeout(async () => {
-      try {
-        await login(credentials);
-        navigate('/');
-      } catch (err) {
-        console.error('Quick login error:', err);
-        setError(err.response?.data?.message || 'Quick login failed. Please try again.');
-      }
-    }, 100);
+    try {
+      await login(credentials);
+      // Clear form on success
+      setEmail('');
+      setPassword('');
+      navigate('/');
+    } catch (err) {
+      console.error('Quick login error:', err);
+      setError(err.response?.data?.message || 'Quick login failed. Please try again.');
+      // Clear form on error
+      setEmail('');
+      setPassword('');
+    }
   };
 
   const fillCredentials = (role) => {
